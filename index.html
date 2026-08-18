@@ -6,75 +6,24 @@
   <title>Sportwetten Tracker</title>
   <style>
     * { box-sizing: border-box; }
-    body {
-      margin: 0;
-      font-family: Arial, Helvetica, sans-serif;
-      background: #0b1020;
-      color: #f5f7fb;
-    }
-    .container {
-      width: min(1100px, 92%);
-      margin: 0 auto;
-      padding: 40px 0 60px;
-    }
-    header { margin-bottom: 30px; }
-    .eyebrow {
-      color: #7dd3fc;
-      font-size: 13px;
-      font-weight: 700;
-      letter-spacing: 1.5px;
-      text-transform: uppercase;
-      margin-bottom: 8px;
-    }
-    h1 { margin: 0; font-size: 38px; }
-    .subtitle { color: #9ca8bd; margin-top: 8px; }
-    .stats {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 16px;
-      margin-bottom: 24px;
-    }
-    .card {
-      background: #151c30;
-      border: 1px solid #26304a;
-      border-radius: 16px;
-      padding: 22px;
-    }
-    .label { color: #9ca8bd; font-size: 14px; }
-    .value { font-size: 30px; font-weight: 700; margin-top: 8px; }
-    .main {
-      display: grid;
-      grid-template-columns: 1.4fr .8fr;
-      gap: 20px;
-    }
-    .section-title { margin: 0 0 18px; font-size: 20px; }
-    .empty {
-      min-height: 260px;
-      display: grid;
-      place-items: center;
-      text-align: center;
-      color: #8995aa;
-      border: 1px dashed #34415f;
-      border-radius: 12px;
-    }
-    button {
-      width: 100%;
-      border: 0;
-      border-radius: 10px;
-      padding: 13px 16px;
-      background: #38bdf8;
-      color: #06111d;
-      font-weight: 700;
-      cursor: pointer;
-    }
-    .note { margin-top: 12px; color: #71809a; font-size: 13px; line-height: 1.5; }
-    @media (max-width: 800px) {
-      .stats, .main { grid-template-columns: 1fr 1fr; }
-    }
-    @media (max-width: 520px) {
-      .stats, .main { grid-template-columns: 1fr; }
-      h1 { font-size: 30px; }
-    }
+    body { margin:0; font-family:Arial,Helvetica,sans-serif; background:#0b1020; color:#f5f7fb; }
+    .container { width:min(1100px,92%); margin:0 auto; padding:40px 0 60px; }
+    header { margin-bottom:30px; }
+    .eyebrow { color:#7dd3fc; font-size:13px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; margin-bottom:8px; }
+    h1 { margin:0; font-size:38px; }
+    .subtitle { color:#9ca8bd; margin-top:8px; }
+    .stats { display:grid; grid-template-columns:repeat(4,1fr); gap:16px; margin-bottom:24px; }
+    .card { background:#151c30; border:1px solid #26304a; border-radius:16px; padding:22px; }
+    .label { color:#9ca8bd; font-size:14px; }
+    .value { font-size:30px; font-weight:700; margin-top:8px; }
+    .main { display:grid; grid-template-columns:1.4fr .8fr; gap:20px; }
+    .section-title { margin:0 0 18px; font-size:20px; }
+    .empty { min-height:220px; display:grid; place-items:center; text-align:center; color:#8995aa; border:1px dashed #34415f; border-radius:12px; padding:20px; }
+    button { width:100%; border:0; border-radius:10px; padding:13px 16px; background:#38bdf8; color:#06111d; font-weight:700; cursor:pointer; }
+    .note { margin-top:12px; color:#71809a; font-size:13px; line-height:1.5; }
+    .status { display:inline-block; margin-top:12px; padding:7px 10px; border-radius:8px; background:#123c2b; color:#7ff0b4; font-size:13px; font-weight:700; }
+    @media(max-width:800px){ .stats,.main{grid-template-columns:1fr 1fr;} }
+    @media(max-width:520px){ .stats,.main{grid-template-columns:1fr;} h1{font-size:30px;} }
   </style>
 </head>
 <body>
@@ -82,27 +31,30 @@
     <header>
       <div class="eyebrow">Persönliches Wett-Tracking</div>
       <h1>Sportwetten Tracker</h1>
-      <div class="subtitle">Bankroll, Tagesergebnisse und Wettverlauf auf einen Blick.</div>
+      <div class="subtitle">Dein täglicher 100-€-Einsatz und dein separates Gewinnkonto.</div>
     </header>
-
     <section class="stats">
-      <div class="card"><div class="label">Aktuelle Bankroll</div><div class="value">100,00 €</div></div>
-      <div class="card"><div class="label">Gewinn heute</div><div class="value">0,00 €</div></div>
-      <div class="card"><div class="label">Gewinn im Monat</div><div class="value">0,00 €</div></div>
-      <div class="card"><div class="label">Tagesziel</div><div class="value">10–50 €</div></div>
+      <div class="card"><div class="label">🏦 Gewinnkonto</div><div class="value">0,00 €</div></div>
+      <div class="card"><div class="label">🎯 Heutiger Einsatz</div><div class="value">100,00 €</div></div>
+      <div class="card"><div class="label">📈 Gewinn heute</div><div class="value">0,00 €</div></div>
+      <div class="card"><div class="label">📊 Gewinn im Monat</div><div class="value">0,00 €</div></div>
     </section>
-
     <section class="main">
       <div class="card">
-        <h2 class="section-title">Heutige Wetten</h2>
-        <div class="empty">Noch keine Wetten eingetragen.<br>Später erscheinen hier deine offenen und abgeschlossenen Tipps.</div>
+        <h2 class="section-title">Heutiger Wett-Tag</h2>
+        <div class="empty"><div><strong>Noch keine Wette eingetragen.</strong><br><br>Einsatz: 100,00 €<br>Möglicher Gewinn: noch offen</div></div>
       </div>
-
       <div class="card">
-        <h2 class="section-title">Schnellübersicht</h2>
-        <button type="button">+ Wette eintragen</button>
-        <div class="note">Einzahlungen werden später getrennt von Wettgewinnen erfasst. So bleibt die Statistik sauber.</div>
+        <h2 class="section-title">Wettstatus</h2>
+        <div style="font-size:26px;font-weight:700;">🟢 AKTIV</div>
+        <div class="status">100 € für heute verfügbar</div>
+        <div class="note">Gewinne werden abgeschöpft und landen im Gewinnkonto. Dieses Geld wird nicht für neue Wetten verwendet.</div>
+        <button type="button" style="margin-top:18px;">+ Wette eintragen</button>
       </div>
+    </section>
+    <section class="card" style="margin-top:20px;">
+      <h2 class="section-title">Wettregel</h2>
+      <div class="note" style="font-size:15px;">Startkapital gibt es am 01. und 15. des Monats. Pro aktivem Tag stehen 100 € für den Einsatz zur Verfügung. Wird der Einsatz verloren, pausiert der Wettbetrieb bis zum nächsten 01. oder 15. Das Gewinnkonto bleibt davon unberührt.</div>
     </section>
   </div>
 </body>
