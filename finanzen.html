@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Finanzen – Sportwetten Tracker</title>
+  <style>
+    *{box-sizing:border-box}
+    body{margin:0;font-family:Arial,Helvetica,sans-serif;background:#0b1020;color:#f5f7fb}
+    .container{width:min(900px,92%);margin:auto;padding:40px 0 60px}
+    a{color:#7dd3fc;text-decoration:none}
+    .eyebrow{color:#7dd3fc;font-size:13px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase}
+    h1{margin:8px 0 4px;font-size:36px}.subtitle{color:#9ca8bd}
+    .grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin:28px 0}
+    .card{background:#151c30;border:1px solid #26304a;border-radius:16px;padding:22px}
+    .label{color:#9ca8bd;font-size:14px}.value{font-size:28px;font-weight:700;margin-top:8px}
+    .positive{color:#7ff0b4}.negative{color:#ff8e8e}
+    input{width:100%;padding:13px;border-radius:10px;border:1px solid #34415f;background:#0b1020;color:#fff;font-size:16px;margin:8px 0 12px}
+    button{width:100%;border:0;border-radius:10px;padding:13px;background:#38bdf8;color:#06111d;font-weight:700;cursor:pointer}.secondary{background:#26304a;color:#fff}
+    .row{display:flex;justify-content:space-between;gap:12px;padding:12px 0;border-bottom:1px solid #26304a}.row:last-child{border-bottom:0}
+    .note{color:#9ca8bd;font-size:13px;line-height:1.5}
+    @media(max-width:700px){.grid{grid-template-columns:1fr}.row{align-items:flex-start;flex-direction:column}}
+  </style>
+</head>
+<body>
+<div class="container">
+  <a href="./">← Zur Startseite</a>
+  <header style="margin-top:22px"><div class="eyebrow">Finanzen</div><h1>Gewinn & Auszahlungen</h1><div class="subtitle">Gewinnkonto, tatsächlicher Gesamtgewinn und Auszahlungen getrennt voneinander.</div></header>
+
+  <section class="grid">
+    <div class="card"><div class="label">🏦 Gewinnkonto</div><div class="value" id="savings">0,00 €</div></div>
+    <div class="card"><div class="label">📈 Gesamtgewinn seit Start</div><div class="value positive" id="totalProfit">0,00 €</div></div>
+    <div class="card"><div class="label">💸 Insgesamt ausgezahlt</div><div class="value" id="withdrawn">0,00 €</div></div>
+  </section>
+
+  <section class="card">
+    <h2>Auszahlung erfassen</h2>
+    <div class="note">Eine Auszahlung wird vom Gewinnkonto abgezogen, aber nicht als Verlust gewertet.</div>
+    <input id="amount" type="number" min="0.01" step="0.01" placeholder="z. B. 200">
+    <button id="withdraw">Auszahlung speichern</button>
+  </section>
+
+  <section class="card" style="margin-top:20px">
+    <h2>Auszahlungen</h2>
+    <div id="withdrawalList" class="note">Noch keine Auszahlungen.</div>
+  </section>
+
+  <section class="card" style="margin-top:20px">
+    <h2>Daten sichern</h2>
+    <div class="note" style="margin-bottom:14px">Exportiert deinen aktuellen Tracker-Stand als JSON-Datei. Die Datei enthält Gewinnkonto, Wetten und Auszahlungen.</div>
+    <button id="export" class="secondary">Daten exportieren</button>
+  </section>
+</div>
+<script>
+const storageKey='sportwettenTrackerV2';
+const euro=v=>Number(v).toLocaleString('de-DE',{style:'currency',currency:'EUR'});
+const $=id=>document.getElementById(id);
+function load(){
+  const data=JSON.parse(localStorage.getItem(storageKey)||'null')||{savings:0,bets:[],monthKey:new Date().toISOString().slice(0,7)};
+  if(!Array.isArray(data.bets))data.bets=[];
+  if(!Array.isArray(data.withdrawals))data.withdrawals=[];
+  return data;
+}
+function save(data){localStorage.setItem(storageKey,JSON.stringify(data));}
+function totalProfit(data){return data.bets.filter(b=>b.status==='won').reduce((s,b)=>s+Number(b.possible||0),0)-data.bets.filter(b=>b.status==='lost').length*100;}
+function totalWithdrawn(data){return data.withdrawals.reduce((s,w)=>s+Number(w.amount||0),0);}
+function render(){
+  const data=load();
+  $('savings').textContent=euro(data.savings);
+  $('totalProfit').textContent=euro(totalProfit(data));
+  $('withdrawn').textContent=euro(totalWithdrawn(data));
+  if(!data.withdrawals.length){$('withdrawalList').textContent='Noch keine Auszahlungen.';return;}
+  $('withdrawalList').innerHTML=data.withdrawals.slice().reverse().map(w=>`<div class="row"><span>${new Date(w.date).toLocaleDateString('de-DE')}</span><strong class="negative">-${euro(w.amount)}</strong></div>`).join('');
+}
+$('withdraw').onclick=()=>{
+  const amount=Number($('amount').value);
+  const data=load();
+  if(!Number.isFinite(amount)||amount<=0){alert('Bitte einen gültigen Betrag eingeben.');return;}
+  if(amount>Number(data.savings)){alert('Die Auszahlung darf das Gewinnkonto nicht überschreiten.');return;}
+  data.savings=Number(data.savings)-amount;
+  data.withdrawals.push({id:Date.now().toString(),date:new Date().toISOString(),amount});
+  save(data);$('amount').value='';render();
+};
+$('export').onclick=()=>{
+  const data=load();
+  const payload={exportedAt:new Date().toISOString(),...data,totalProfit:totalProfit(data),totalWithdrawn:totalWithdrawn(data)};
+  const blob=new Blob([JSON.stringify(payload,null,2)],{type:'application/json'});
+  const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download=`sportwetten-backup-${new Date().toISOString().slice(0,10)}.json`;a.click();URL.revokeObjectURL(url);
+};
+render();
+</script>
+</body>
+</html>
